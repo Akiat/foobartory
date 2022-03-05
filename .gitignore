@@ -1,6 +1,6 @@
 .idea/*
 .pytest_cache/*
-__pycache__/*
+*.pyc
 build/*
 foobartory.egg-info/*
 htmlcov/*
