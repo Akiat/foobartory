@@ -1,7 +1,7 @@
 import pytest
 
 from foobartory import config
-from foobartory.foobartory import Foobartory
+from foobartory.factory import Foobartory
 from foobartory.models import Robot
 
 config.SPEED_MULTIPLIER = 5000

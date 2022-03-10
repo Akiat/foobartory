@@ -2,7 +2,7 @@ import argparse
 import asyncio
 
 from foobartory import config as cfg
-from foobartory.foobartory import Foobartory
+from foobartory.factory import Foobartory
 
 
 async def start_factory() -> None:
