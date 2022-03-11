@@ -1,5 +1,7 @@
 import asyncio
-from asyncio import Lock, Queue
+from asyncio import Queue
+from time import gmtime, strftime
+from timeit import default_timer as timer
 
 from rich.console import Console
 from rich.live import Live
@@ -64,6 +66,8 @@ Money: [bright_cyan]{self.money}[/]\
         Displays and updates the table and information
         as long as the factory is running
         """
+        start = timer()
+
         with Live(refresh_per_second=4) as live:
             while self.running:
                 live.update(await self.generate_table())
@@ -73,9 +77,15 @@ Money: [bright_cyan]{self.money}[/]\
             live.update(await self.generate_table())
 
         Console().print(
-            f"Your Foobartory has now {len(self.robots)} robots, congrats!",
+            f"Your Foobartory has now {len(self.robots)} robots congrats!",
             justify="center",
             style="bold green",
+        )
+
+        elapsed_time = int((timer() - start) * cfg.SPEED_MULTIPLIER)
+        str_time = strftime("[cyan]%M[/]m [cyan]%S[/]s", gmtime(elapsed_time))
+        Console().print(
+            f"Real elapsed time: {str_time}.", justify="center", style="bold green"
         )
 
     async def add_robot(self) -> None:
