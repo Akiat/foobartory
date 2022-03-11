@@ -10,12 +10,14 @@ from foobartory.decorators import wait_if_moving
 
 @dataclass
 class Foo:
-    uid: str = str(uuid.uuid4())
+    def __init__(self):
+        self.uid: str = str(uuid.uuid4())
 
 
 @dataclass
 class Bar:
-    uid: str = str(uuid.uuid4())
+    def __init__(self):
+        self.uid: str = str(uuid.uuid4())
 
 
 @dataclass
@@ -41,21 +43,16 @@ class Robot:
         while self.running:
             if await self.check_and_reserve_buy_robot():
                 await self.buy_robot()
-                continue
 
-            if await self.check_and_reserve_sell_foobar():
-                await self.sell_foobar()
-                continue
-
-            if await self.check_and_reserve_build_foobar():
-                await self.build_foobar()
-                continue
-
-            if (
-                self.foobartory.money >= cfg.ROBOT_MONEY_COST
-                and self.foobartory.foo_queue.qsize() >= cfg.ROBOT_FOO_COST
-            ) or random.random() < 0.7:
+            elif self.foobartory.foo_queue.qsize() < cfg.ROBOT_FOO_COST:
                 await self.mine_foo()
+
+            elif await self.check_and_reserve_sell_foobar():
+                await self.sell_foobar()
+
+            elif await self.check_and_reserve_build_foobar():
+                await self.build_foobar()
+
             else:
                 await self.mine_bar()
 
