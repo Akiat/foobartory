@@ -32,14 +32,6 @@ class Foobartory:
         self.reserved_bar: Queue[Bar] = Queue()
         self.reserved_foobar: Queue[Foobar] = Queue()
 
-        # Locks
-        self.foo_lock: Lock = Lock()
-        self.bar_lock: Lock = Lock()
-        self.foobar_lock: Lock = Lock()
-        self.money_lock: Lock = Lock()
-        self.robot_lock: Lock = Lock()
-        self.reserved_money_lock: Lock = Lock()
-
     async def generate_table(self) -> Table:
         """
         Generates the displayed table
@@ -60,12 +52,11 @@ Money: [bright_cyan]{self.money}[/]\
         table.add_column("Robot No.", style="bright_magenta", ratio=2)
         table.add_column("Current Job", style="yellow3", ratio=8)
 
-        async with self.robot_lock:
-            for i, _ in enumerate(self.robots):
-                table.add_row(
-                    f"{self.robots[i].uid}",
-                    f"{constants.jobs[self.robots[i].current_job]}",
-                )
+        for i, _ in enumerate(self.robots):
+            table.add_row(
+                f"{self.robots[i].uid}",
+                f"{constants.jobs[self.robots[i].current_job]}",
+            )
         return table
 
     async def start(self) -> None:
@@ -92,10 +83,7 @@ Money: [bright_cyan]{self.money}[/]\
         Add one robot to the Foobartory and start it.
         Also stop the Foobartory and robots if MAX_ROBOT_NUMBER is reached.
         """
-        async with self.robot_lock:
-            self.robots.append(
-                robot := Robot(uid=len(self.robots) + 1, foobartory=self)
-            )
+        self.robots.append(robot := Robot(uid=len(self.robots) + 1, foobartory=self))
 
         if len(self.robots) >= cfg.MAX_ROBOT_NUMBER:
             await self.stop()
@@ -106,7 +94,6 @@ Money: [bright_cyan]{self.money}[/]\
         """
         Stop the foobartory and the robots.
         """
-        async with self.robot_lock:
-            for i, _ in enumerate(self.robots):
-                await self.robots[i].stop()
+        for i, _ in enumerate(self.robots):
+            await self.robots[i].stop()
         self.running = False
